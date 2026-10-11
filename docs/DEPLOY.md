@@ -1,8 +1,24 @@
 # העלאת ערך+ לאתר קבוע (בלי להריץ כלום במחשב)
 
-בסוף התהליך תהיה לכם כתובת קבועה (למשל `https://erech-plus.vercel.app`) שנכנסים אליה מכל מחשב או טלפון, עם סיסמה. כל עדכון שנדחף ל-GitHub מתעדכן באתר לבד.
+בסוף תהיה לכם כתובת קבועה שנכנסים אליה מכל מחשב או טלפון, עם סיסמה. את כל ההגדרות כבר הכנתי; נשאר רק לפתוח חשבון אירוח על שמכם, פעם אחת.
 
-**מה צריך:** חשבון GitHub (כבר יש), חשבון Vercel (אירוח האתר), ומסד נתונים Neon (נפתח מתוך Vercel, בלי חשבון נפרד). כ-10 דקות.
+## הדרך הקצרה: כפתור אחד
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftalmusic135-web%2Freal-estate-valuation&project-name=erech-plus&repository-name=erech-plus&env=APP_PASSWORD&envDescription=%D7%A1%D7%99%D7%A1%D7%9E%D7%AA%20%D7%94%D7%9B%D7%A0%D7%99%D7%A1%D7%94%20%D7%9C%D7%9E%D7%A2%D7%A8%D7%9B%D7%AA%20%E2%80%93%20%D7%91%D7%97%D7%A8%D7%95%20%D7%A1%D7%99%D7%A1%D7%9E%D7%94%20%D7%A9%D7%9C%2010%20%D7%AA%D7%95%D7%95%D7%99%D7%9D%20%D7%9C%D7%A4%D7%97%D7%95%D7%AA&products=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22productSlug%22%3A%22neon%22%2C%22integrationSlug%22%3A%22neon%22%7D%5D)
+
+1. לוחצים על הכפתור למעלה.
+2. **Continue with GitHub** (אם מבקשים לבחור מסלול: Hobby).
+3. **Create** – זה יוצר עותק של הקוד בחשבון ה-GitHub שלכם.
+4. ב-Neon (מסד הנתונים): **Add** / **Create**, מאשרים את ברירות המחדל והמסלול החינמי.
+5. בשדה `APP_PASSWORD` כותבים סיסמה לכניסה למערכת ← **Deploy**.
+6. אחרי כ-3 דקות מופיעה הכתובת של האתר. שמרו אותה במועדפים. נכנסים עם הסיסמה מסעיף 5.
+
+בפעם הראשונה המערכת יוצרת לבד את מסד הנתונים ומכניסה נתוני הדגמה. נתונים שתשמרו לא נמחקים בעדכונים.
+אם בכניסה הראשונה מופיע "משהו השתבש": ב-Vercel ← **Deployments** ← **⋯** ← **Redeploy**.
+
+---
+
+## דרך חלופית: חיבור ידני
 
 ## שלב 1 – פתיחת חשבון Vercel
 1. נכנסים ל-https://vercel.com/signup
@@ -10,7 +26,7 @@
 
 ## שלב 2 – חיבור הקוד
 1. במסך הראשי של Vercel: **Add New…** ← **Project**.
-2. ברשימה מופיע `real-estate-valuation` ← לוחצים **Import**.
+2. ברשימה מופיע `real-estate-valuation` (או `erech-plus`) ← לוחצים **Import**.
    אם הוא לא מופיע: לוחצים **Adjust GitHub App Permissions** ומאשרים גישה לריפו הזה.
 3. פותחים את **Environment Variables** ומוסיפים:
    - Name: `APP_PASSWORD`
@@ -20,7 +36,7 @@
 ## שלב 3 – מסד נתונים
 1. בתוך הפרויקט ב-Vercel: לשונית **Storage** ← **Create Database**.
 2. בוחרים **Neon** (Serverless Postgres) ← **Continue**.
-3. אזור (Region): **Frankfurt**. תוכנית: **Free**. ← **Create**.
+3. תוכנית: **Free** ← **Create**.
 4. במסך החיבור מסמנים את כל הסביבות (Production, Preview, Development) ← **Connect**.
 
 ## שלב 4 – הפעלה

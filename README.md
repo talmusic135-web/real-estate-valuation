@@ -7,6 +7,8 @@
 ## הפעלה כאתר (מומלץ)
 
 אין צורך להריץ כלום במחשב: מעלים את המערכת ל-Vercel עם מסד נתונים Neon ומקבלים כתובת קבועה עם סיסמה.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftalmusic135-web%2Freal-estate-valuation&project-name=erech-plus&repository-name=erech-plus&env=APP_PASSWORD&envDescription=%D7%A1%D7%99%D7%A1%D7%9E%D7%AA%20%D7%94%D7%9B%D7%A0%D7%99%D7%A1%D7%94%20%D7%9C%D7%9E%D7%A2%D7%A8%D7%9B%D7%AA%20%E2%80%93%20%D7%91%D7%97%D7%A8%D7%95%20%D7%A1%D7%99%D7%A1%D7%9E%D7%94%20%D7%A9%D7%9C%2010%20%D7%AA%D7%95%D7%95%D7%99%D7%9D%20%D7%9C%D7%A4%D7%97%D7%95%D7%AA&products=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22productSlug%22%3A%22neon%22%2C%22integrationSlug%22%3A%22neon%22%7D%5D)
+
 מדריך צעד-אחר-צעד: [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
 ## מה נבנה
