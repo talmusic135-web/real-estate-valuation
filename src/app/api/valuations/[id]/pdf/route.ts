@@ -1,6 +1,7 @@
 import { ApiError, apiHandler } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { getCurrentContext } from "@/lib/services/context";
+import { SESSION_COOKIE } from "@/lib/auth/session";
 
 export const runtime = "nodejs";
 
@@ -8,6 +9,8 @@ export const runtime = "nodejs";
  * ייצוא PDF בצד השרת: Chromium (Playwright) מרנדר את עמוד הדוח.
  * אם CHROMIUM_PATH לא מוגדר, מוחזר 501 והממשק עובר להדפסה מהדפדפן.
  */
+export const maxDuration = 60;
+
 export const GET = apiHandler<{ params: Promise<{ id: string }> }>(async (req, { params }) => {
   const { id } = await params;
   const { accountId } = await getCurrentContext();
@@ -19,8 +22,12 @@ export const GET = apiHandler<{ params: Promise<{ id: string }> }>(async (req, {
   const { chromium } = await import("playwright-core");
   const browser = await chromium.launch({ executablePath, args: ["--no-sandbox"] });
   try {
-    const page = await browser.newPage();
     const origin = new URL(req.url).origin;
+    const context = await browser.newContext();
+    // כשהמערכת מוגנת בסיסמה, הדפדפן הפנימי צריך את עוגיית ההתחברות של המשתמש
+    const session = req.headers.get("cookie")?.match(new RegExp(`(?:^|;\\s*)${SESSION_COOKIE}=([^;]+)`))?.[1];
+    if (session) await context.addCookies([{ name: SESSION_COOKIE, value: session, url: origin }]);
+    const page = await context.newPage();
     await page.goto(`${origin}/valuations/${id}/report?print=1`, { waitUntil: "networkidle", timeout: 30_000 });
     const pdf = await page.pdf({
       format: "A4",

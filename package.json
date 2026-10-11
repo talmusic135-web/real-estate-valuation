@@ -15,7 +15,9 @@
     "db:reset": "prisma migrate reset --force",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "vercel-build": "node scripts/vercel-build.mjs",
+    "db:ensure-seed": "tsx scripts/ensure-seed.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

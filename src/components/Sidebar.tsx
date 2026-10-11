@@ -16,9 +16,14 @@ const NAV = [
   { href: "/settings", label: "הגדרות", icon: "⚙" },
 ];
 
-export function Sidebar() {
+export function Sidebar({ showLogout = false }: { showLogout?: boolean }) {
   const path = usePathname();
   const [open, setOpen] = useState(false);
+  if (path === "/login") return null;
+  async function logout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    window.location.href = "/login";
+  }
   const isActive = (href: string) =>
     href === "/" ? path === "/" : href === "/valuations" ? path === "/valuations" || /^\/valuations\/(?!new)[^/]+/.test(path) : path.startsWith(href);
   return (
@@ -58,6 +63,13 @@ export function Sidebar() {
             </Link>
           ))}
         </nav>
+        {showLogout && (
+          <div className="p-3">
+            <button onClick={logout} className="w-full rounded-lg px-3 py-2 text-right text-sm text-slate-300 hover:bg-white/10 hover:text-white">
+              יציאה
+            </button>
+          </div>
+        )}
       </aside>
     </>
   );

@@ -4,6 +4,11 @@
 
 > הדוחות אינם שומת מקרקעין ואינם מחליפים שמאי מוסמך. מחיר מבוקש במודעה לעולם אינו מוצג כמחיר מכירה.
 
+## הפעלה כאתר (מומלץ)
+
+אין צורך להריץ כלום במחשב: מעלים את המערכת ל-Vercel עם מסד נתונים Neon ומקבלים כתובת קבועה עם סיסמה.
+מדריך צעד-אחר-צעד: [`docs/DEPLOY.md`](docs/DEPLOY.md).
+
 ## מה נבנה
 
 | מסך | מה עושה |
@@ -34,7 +39,7 @@
 
 ## משתני סביבה
 
-ראו `.env.example`. חובה: `DATABASE_URL`. אופציונלי: `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, `AI_PROVIDER`, `GOVIL_NADLAN_ENABLED`, `GOVIL_NADLAN_API_URL`, `LISTINGS_PROVIDER_URL`, `LISTINGS_PROVIDER_API_KEY`, `DEMO_DATA_ENABLED`, `CHROMIUM_PATH` (ל-PDF בשרת), `RATE_LIMIT_PER_MINUTE`. כל המפתחות נקראים בשרת בלבד.
+ראו `.env.example`. חובה: `DATABASE_URL` (או המשתנים שהאינטגרציה של Neon/Supabase יוצרת), ובאתר מאורח גם `APP_PASSWORD`. אופציונלי: `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, `AI_PROVIDER`, `GOVIL_NADLAN_ENABLED`, `GOVIL_NADLAN_API_URL`, `LISTINGS_PROVIDER_URL`, `LISTINGS_PROVIDER_API_KEY`, `DEMO_DATA_ENABLED`, `CHROMIUM_PATH` (ל-PDF בשרת), `RATE_LIMIT_PER_MINUTE`. כל המפתחות נקראים בשרת בלבד.
 
 ## הרצה מקומית
 
@@ -53,7 +58,7 @@ npm run dev                     # http://localhost:3000
 ## בדיקות
 
 ```bash
-npm test                        # 31 בדיקות יחידה (Vitest): סטטיסטיקה, מנוע, מחברים, נרמול, בקרת AI
+npm test                        # 35 בדיקות יחידה (Vitest): סטטיסטיקה, מנוע, מחברים, נרמול, בקרת AI
 npm run build && npm start      # בטרמינל נפרד
 CHROMIUM_PATH=/path/to/chrome npm run test:e2e   # 6 בדיקות דפדפן (Playwright)
 ```
@@ -64,7 +69,7 @@ CHROMIUM_PATH=/path/to/chrome npm run test:e2e   # 6 בדיקות דפדפן (Pl
 
 1. חיבור מקור עסקאות אמיתי (שלב 2) והחלפת נתוני ההדגמה (`DEMO_DATA_ENABLED=false`).
 2. כיול משקלות הדמיון ורוחב הטווח מול עסקאות אמיתיות (backtesting) – שלב 3.
-3. התחברות משתמשים והרשאות (המודל כבר תומך בחשבונות ותפקידים; `src/lib/services/context.ts` היא נקודת ההחלפה).
+3. משתמשים נפרדים והרשאות. כרגע יש סיסמת משרד אחת (`APP_PASSWORD`). (המודל כבר תומך בחשבונות ותפקידים; `src/lib/services/context.ts` היא נקודת ההחלפה).
 4. הגבלת קצב משותפת (Redis) במקום בזיכרון, ולוגים מרוכזים.
 5. מדיניות פרטיות ושמירת נתונים לכתובות ולמידע אישי, בהתאם לחוק הגנת הפרטיות (כולל תיקון 13).
 6. פריסה: `Dockerfile` מוכן (כולל Chromium ל-PDF ו-`prisma migrate deploy` בעלייה); נדרש PostgreSQL מנוהל.

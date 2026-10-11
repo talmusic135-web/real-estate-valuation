@@ -3,6 +3,7 @@ import "./globals.css";
 import "leaflet/dist/leaflet.css";
 import { Sidebar } from "@/components/Sidebar";
 import { DemoBanner } from "@/components/DemoBanner";
+import { authEnabled } from "@/lib/auth/session";
 
 export const metadata: Metadata = {
   title: "ערך+ | הערכת שווי דירות למתווכים",
@@ -19,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="font-sans">
         <div className="flex min-h-screen">
-          <Sidebar />
+          <Sidebar showLogout={authEnabled()} />
           <div className="flex min-w-0 flex-1 flex-col">
             <DemoBanner />
             <main className="mx-auto w-full max-w-7xl flex-1 p-4 md:p-8">{children}</main>

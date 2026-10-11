@@ -3,6 +3,8 @@ import { apiHandler } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { reseedDemoData } from "@/lib/demo/seed-demo";
 
+export const maxDuration = 60;
+
 export const POST = apiHandler(async () => {
   const res = await reseedDemoData(prisma);
   await prisma.connectorRun.create({

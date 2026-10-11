@@ -14,6 +14,8 @@ const Body = z.object({
 });
 
 /** ייבוא קובץ CSV: במבנה האחיד או בפורמט המאגר הממשלתי */
+export const maxDuration = 60;
+
 export const POST = apiHandler(async (req) => {
   const body = Body.parse(await req.json());
   const rows = parseCsv(body.csv);
