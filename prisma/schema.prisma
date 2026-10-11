@@ -1,0 +1,174 @@
+// מודל הנתונים של מערכת הערכת השווי.
+// עקרון מרכזי: שדה שלא ידוע נשאר null. לא ממציאים ערכים.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// הפרדה בין חשבונות (משרדי תיווך). כל הערכה שייכת לחשבון.
+model Account {
+  id         String      @id @default(cuid())
+  name       String
+  /// ברירות מחדל להגדרות ההשוואה בטופס הערכה חדשה
+  settings   Json?
+  createdAt  DateTime    @default(now())
+  users      User[]
+  valuations Valuation[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      UserRole @default(BROKER)
+  accountId String
+  account   Account  @relation(fields: [accountId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+enum UserRole {
+  ADMIN
+  BROKER
+  VIEWER
+}
+
+enum RecordType {
+  completed_transaction
+  active_listing
+  historical_listing
+}
+
+/// רשומת נכס במבנה אחיד, מכל מקור מידע.
+model PropertyRecord {
+  id                  String     @id @default(cuid())
+  sourceName          String     @map("source_name")
+  sourceUrl           String?    @map("source_url")
+  sourceRecordId      String     @map("source_record_id")
+  recordType          RecordType @map("record_type")
+  isDemo              Boolean    @default(false) @map("is_demo")
+  transactionDate     DateTime?  @map("transaction_date")
+  listingDate         DateTime?  @map("listing_date")
+  lastSeenAt          DateTime?  @map("last_seen_at")
+  city                String
+  neighborhood        String?
+  street              String?
+  houseNumber         String?    @map("house_number")
+  address             String?
+  block               String?
+  parcel              String?
+  latitude            Float?
+  longitude           Float?
+  propertyType        String?    @map("property_type")
+  rooms               Float?
+  areaSqm             Float?     @map("area_sqm")
+  floor               Int?
+  buildingFloors      Int?       @map("building_floors")
+  elevator            Boolean?
+  balcony             Boolean?
+  balconyAreaSqm      Float?     @map("balcony_area_sqm")
+  parkingSpaces       Int?       @map("parking_spaces")
+  storage             Boolean?
+  mamad               Boolean?
+  condition           String?
+  buildingYear        Int?       @map("building_year")
+  transactionPriceIls Int?       @map("transaction_price_ils")
+  askingPriceIls      Int?       @map("asking_price_ils")
+  dataConfidence      Float?     @map("data_confidence")
+  lastVerifiedAt      DateTime?  @map("last_verified_at")
+  fetchedAt           DateTime   @default(now()) @map("fetched_at")
+  /// הנתון המקורי כפי שהתקבל מהמקור, לפני נרמול
+  rawData             Json?      @map("raw_data")
+
+  priceHistory PriceHistory[]
+  comparables  ValuationComparable[]
+
+  @@unique([sourceName, sourceRecordId])
+  @@index([city, neighborhood])
+  @@index([city, street])
+  @@index([recordType, transactionDate])
+  @@map("property_records")
+}
+
+/// היסטוריית מחירים מתועדת של מודעה (רק כאשר נשמרה בפועל)
+model PriceHistory {
+  id         String         @id @default(cuid())
+  recordId   String
+  record     PropertyRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  priceIls   Int
+  observedAt DateTime
+
+  @@index([recordId, observedAt])
+  @@map("price_history")
+}
+
+enum ValuationStatus {
+  draft
+  completed
+  insufficient_data
+}
+
+model Valuation {
+  id               String          @id @default(cuid())
+  accountId        String
+  account          Account         @relation(fields: [accountId], references: [id])
+  title            String
+  status           ValuationStatus @default(draft)
+  /// מאפייני הנכס והגדרות ההשוואה כפי שהוזנו (מאומת ע"י Zod)
+  input            Json
+  /// תוצאת החישוב המלאה (אומדן, טווח, אמינות, מתודולוגיה)
+  result           Json?
+  algorithmVersion String?
+  aiSummary        String?
+  aiProvider       String?
+  brokerNotes      String?
+  /// מקורות המידע שהשתתפו והסטטוס שלהם בזמן הריצה
+  sourcesUsed      Json?
+  parentId         String?
+  parent           Valuation?      @relation("ValuationVersions", fields: [parentId], references: [id])
+  versions         Valuation[]     @relation("ValuationVersions")
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  comparables      ValuationComparable[]
+
+  @@index([accountId, createdAt])
+  @@map("valuations")
+}
+
+/// העסקאות/מודעות שנבחרו להשוואה, כולל צילום מצב בזמן ההערכה
+model ValuationComparable {
+  id          String         @id @default(cuid())
+  valuationId String
+  valuation   Valuation      @relation(fields: [valuationId], references: [id], onDelete: Cascade)
+  recordId    String
+  record      PropertyRecord @relation(fields: [recordId], references: [id])
+  kind        String         // transaction | listing
+  similarity  Float
+  weight      Float
+  distanceM   Float?
+  included    Boolean        @default(true)
+  reasons     Json
+  snapshot    Json
+
+  @@index([valuationId])
+  @@map("valuation_comparables")
+}
+
+/// יומן ריצות של מחברי מידע
+model ConnectorRun {
+  id             String    @id @default(cuid())
+  connectorId    String
+  startedAt      DateTime  @default(now())
+  finishedAt     DateTime?
+  status         String    // success | error | skipped
+  recordsFetched Int       @default(0)
+  recordsNew     Int       @default(0)
+  message        String?
+
+  @@index([connectorId, startedAt])
+  @@map("connector_runs")
+}

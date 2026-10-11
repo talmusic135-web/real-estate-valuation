@@ -1,0 +1,3 @@
+source_record_id,record_type,city,neighborhood,street,house_number,transaction_date,transaction_price_ils,rooms,area_sqm,floor,building_floors,elevator,parking_spaces,mamad,condition,property_type,building_year,block,parcel,latitude,longitude,asking_price_ils,listing_date,source_url
+EX-0001,completed_transaction,רמת גן,מרכז העיר,ביאליק,10,14/03/2026,2950000,4,96,3,6,כן,1,כן,שמור,דירה,1985,6147,123,,,,,
+EX-0002,active_listing,רמת גן,מרכז העיר,ביאליק,22,,,4,100,5,8,כן,1,כן,משופץ,דירה,,,,,,3490000,2026-09-20,https://example.com/listing/123
