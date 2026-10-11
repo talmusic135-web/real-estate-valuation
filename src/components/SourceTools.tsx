@@ -154,3 +154,28 @@ export function DemoControls({ count }: { count: number }) {
     </div>
   );
 }
+
+export function SourceToggle({ id, enabled }: { id: "govmap"; enabled: boolean }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+  async function toggle() {
+    if (
+      !enabled &&
+      !confirm("הפעלת שליפת עסקאות מ-GovMap. הנתונים ציבוריים, אבל זה לא ממשק רשמי ומתועד. לאשר שבדקתם שהשימוש מתאים לתנאי השימוש של האתר?")
+    )
+      return;
+    setBusy(true);
+    await fetch("/api/sources/toggle", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, enabled: !enabled }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
+  return (
+    <button className={enabled ? "btn-secondary !py-1" : "btn-primary !py-1"} disabled={busy} onClick={toggle}>
+      {enabled ? "כיבוי המקור" : "הפעלת המקור"}
+    </button>
+  );
+}

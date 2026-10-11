@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getConnectors } from "@/lib/connectors/registry";
+import { getSourceToggles } from "@/lib/services/source-toggles";
 import { getCurrentContext } from "@/lib/services/context";
 import { demoEnabled } from "@/lib/services/records";
 import { Empty, PageHeader, Stat, StatusBadge, ConfidenceBadge } from "@/components/ui";
@@ -20,7 +21,7 @@ export default async function Dashboard() {
     prisma.propertyRecord.count({ where: { isDemo: false } }),
     prisma.connectorRun.findFirst({ orderBy: { startedAt: "desc" } }),
   ]);
-  const connectors = getConnectors().map((c) => c.info());
+  const connectors = getConnectors(await getSourceToggles(accountId)).map((c) => c.info());
 
   return (
     <>

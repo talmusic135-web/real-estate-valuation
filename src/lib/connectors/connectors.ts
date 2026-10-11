@@ -183,6 +183,7 @@ export class ManualEntryConnector implements DataConnector {
 
 export const SOURCE_LABELS: Record<string, string> = {
   demo: "הדגמה",
+  govmap: "רשות המסים (GovMap)",
   govil_nadlan: "מאגר ממשלתי",
   licensed_listings: "ספק מודעות",
   csv_upload: "קובץ שהועלה",

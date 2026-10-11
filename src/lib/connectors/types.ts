@@ -25,6 +25,10 @@ export interface SearchQuery {
   city: string;
   neighborhood?: string;
   street?: string;
+  houseNumber?: string;
+  /** נקודת הנכס אם המשתמש סימן במפה (WGS84) */
+  latitude?: number;
+  longitude?: number;
   recordTypes: RecordType[];
   since: Date;
 }

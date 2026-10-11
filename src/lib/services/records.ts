@@ -50,7 +50,16 @@ export async function loadCityRecords(city: string): Promise<StoredRecord[]> {
   const rows = await prisma.propertyRecord.findMany({
     where: { city: { equals: city.trim(), mode: "insensitive" }, ...(demoEnabled() ? {} : { isDemo: false }) },
   });
-  return dedupe(rows.map(toStored));
+  return dedupe(preferRealOverDemo(rows.map(toStored)));
+}
+
+/**
+ * לא מערבבים: אם בעיר יש עסקאות אמיתיות, נתוני ההדגמה של אותה עיר לא נכנסים לחישוב.
+ * נתוני הדגמה משמשים רק בעיר שאין בה אף עסקה אמיתית (והתוצאה מסומנת כהדגמה).
+ */
+export function preferRealOverDemo(records: StoredRecord[]): StoredRecord[] {
+  const hasReal = records.some((r) => !r.isDemo && r.recordType === "completed_transaction");
+  return hasReal ? records.filter((r) => !r.isDemo) : records;
 }
 
 /** אותה עסקה שהגיעה משני מקורות: נשמרת הרשומה האמינה יותר (ולא נתוני הדגמה) */

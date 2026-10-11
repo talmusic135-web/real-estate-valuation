@@ -5,14 +5,20 @@ import {
   LicensedListingsConnector,
   ManualEntryConnector,
 } from "./connectors";
+import { GovmapTransactionsConnector } from "./govmap";
 import { NotConfiguredError, type ConnectorRunResult, type DataConnector, type SearchQuery } from "./types";
 
 /**
  * רישום המחברים. כדי להוסיף מקור חדש: לממש DataConnector ולהוסיף כאן.
  * לוגיקת ההערכה לא משתנה.
  */
-export function getConnectors(): DataConnector[] {
+export interface SourceToggles {
+  govmap?: boolean;
+}
+
+export function getConnectors(toggles: SourceToggles = {}): DataConnector[] {
   return [
+    new GovmapTransactionsConnector(fetch, toggles.govmap === true),
     new GovIlTransactionsConnector(),
     new LicensedListingsConnector(),
     new CsvUploadConnector(),

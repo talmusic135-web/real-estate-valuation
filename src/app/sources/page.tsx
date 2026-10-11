@@ -1,7 +1,9 @@
 import { prisma } from "@/lib/db";
 import { getConnectors } from "@/lib/connectors/registry";
+import { getCurrentContext } from "@/lib/services/context";
+import { getSourceToggles } from "@/lib/services/source-toggles";
 import { SOURCE_LABELS } from "@/lib/connectors/connectors";
-import { CsvUpload, DemoControls, ManualRecordForm } from "@/components/SourceTools";
+import { CsvUpload, DemoControls, ManualRecordForm, SourceToggle } from "@/components/SourceTools";
 import { PageHeader, StatusBadge } from "@/components/ui";
 import { listCities } from "@/lib/services/queries";
 import { formatDateTime, formatNum } from "@/lib/format";
@@ -9,7 +11,8 @@ import { formatDateTime, formatNum } from "@/lib/format";
 export const dynamic = "force-dynamic";
 
 export default async function SourcesPage() {
-  const connectors = getConnectors().map((c) => c.info());
+  const { accountId: ctxAccountId } = await getCurrentContext();
+  const connectors = getConnectors(await getSourceToggles(ctxAccountId)).map((c) => c.info());
   const [counts, runs, cities, demoCount] = await Promise.all([
     prisma.propertyRecord.groupBy({ by: ["sourceName", "recordType"], _count: true, _max: { fetchedAt: true } }),
     prisma.connectorRun.findMany({ orderBy: { startedAt: "desc" }, take: 15 }),
@@ -58,6 +61,11 @@ export default async function SourcesPage() {
               <a href={c.officialUrl} target="_blank" rel="noreferrer" className="mt-1 inline-block text-xs text-brand-600 underline">
                 אתר המקור
               </a>
+            )}
+            {c.id === "govmap" && (
+              <div className="mt-3">
+                <SourceToggle id="govmap" enabled={c.status === "connected"} />
+              </div>
             )}
             {c.id === "demo" && (
               <div className="mt-3">

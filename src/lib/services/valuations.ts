@@ -1,7 +1,8 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { ValuationInputSchema, type ValuationInput } from "@/lib/domain/schema";
-import { runConnectors } from "@/lib/connectors/registry";
+import { getConnectors, runConnectors } from "@/lib/connectors/registry";
+import { getSourceToggles } from "./source-toggles";
 import { runValuation } from "@/lib/valuation/engine";
 import type { ValuationResult } from "@/lib/valuation/types";
 import { buildFacts } from "@/lib/ai/facts";
@@ -66,13 +67,19 @@ export async function runAndSave(id: string, accountId: string) {
   const now = new Date();
 
   const since = new Date(now.getTime() - input.settings.dateRangeMonths * 2 * 30.4375 * 86400000);
-  const runs = await runConnectors({
+  const runs = await runConnectors(
+    {
     city: input.location.city,
     neighborhood: input.location.neighborhood,
     street: input.location.street,
+    houseNumber: input.location.houseNumber,
+    latitude: input.location.latitude,
+    longitude: input.location.longitude,
     recordTypes: ["completed_transaction", "active_listing"],
     since,
-  });
+    },
+    getConnectors(await getSourceToggles(accountId)),
+  );
 
   const sourcesUsed: { id: string; name: string; status: string; message: string | null; fetched: number; created: number }[] = [];
   for (const r of runs) {
